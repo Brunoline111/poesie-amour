@@ -1,87 +1,105 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Poésie Amour - Connexion</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<meta charset="UTF-8" />
+<title>Poésie Amour - Authentification</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 400px; margin: 30px auto; background: linear-gradient(135deg, #f5a623, #f76b1c, #f5a623); color: #222; }
+  input, button { display: block; margin: 10px 0; padding: 10px; width: 100%; border: none; border-radius: 5px; font-size: 1em; }
+  input { box-shadow: 0 0 5px #f76b1c; }
+  button { background: linear-gradient(90deg, #f76b1c, #f5a623); color: white; cursor: pointer; transition: background 0.3s ease; }
+  button:hover { background: linear-gradient(90deg, #f5a623, #f76b1c); }
+  #user-info { margin-top: 20px; font-weight: bold; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>🌸 Poésie Amour</h2>
 
-    <input type="email" id="email" placeholder="Adresse e-mail" />
-    <input type="password" id="password" placeholder="Mot de passe" />
+<h2>Poésie Amour - Connexion</h2>
 
-    <button id="signup-btn">S'inscrire</button>
-    <button id="login-btn">Se connecter</button>
-    <button id="logout-btn" style="display:none;">Se déconnecter</button>
+<input type="email" id="email" placeholder="Email" />
+<input type="password" id="password" placeholder="Mot de passe" />
 
-    <div id="user-info"></div>
-  </div>
+<button id="signup-btn">S'inscrire</button>
+<button id="login-btn">Se connecter</button>
+<button id="logout-btn" style="display:none;">Se déconnecter</button>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCtm5hzBBhiYBXJ3FN4tmdkm44LK6tMbXs",
-      authDomain: "poesie-amour.firebaseapp.com",
-      projectId: "poesie-amour",
-      storageBucket: "poesie-amour.firebasestorage.app",
-      messagingSenderId: "72054264195",
-      appId: "1:72054264195:web:63eae95b68736a77a5e6b6",
-      measurementId: "G-Y7PXEZ6VRW"
-    };
+<div id="user-info"></div>
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCtm5hzBBhiYBXJ3FN4tmdkm44LK6tMbXs",
+    authDomain: "poesie-amour.firebaseapp.com",
+    projectId: "poesie-amour",
+  };
 
-    const emailInput = document.getElementById('email');
-    const passInput = document.getElementById('password');
-    const signupBtn = document.getElementById('signup-btn');
-    const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    const userInfo = document.getElementById('user-info');
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    signupBtn.onclick = () => {
-      const email = emailInput.value;
-      const password = passInput.value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          const user = userCredential.user;
-          db.collection("users").doc(user.uid).set({
-            email: user.email,
-            createdAt: new Date()
-          });
-          alert("Inscription réussie !");
-        })
-        .catch(error => alert(error.message));
-    };
+  const emailInput = document.getElementById('email');
+  const passInput = document.getElementById('password');
+  const signupBtn = document.getElementById('signup-btn');
+  const loginBtn = document.getElementById('login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const userInfo = document.getElementById('user-info');
 
-    loginBtn.onclick = () => {
-      const email = emailInput.value;
-      const password = passInput.value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => alert("Connexion réussie !"))
-        .catch(error => alert(error.message));
-    };
+  signupBtn.onclick = () => {
+    const email = emailInput.value;
+    const password = passInput.value;
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        alert('Inscription réussie !');
+      })
+      .catch(error => {
+        alert(error.message);
+      });
+  };
 
-    logoutBtn.onclick = () => auth.signOut();
+  loginBtn.onclick = () => {
+    const email = emailInput.value;
+    const password = passInput.value;
+    auth.signInWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        alert('Connexion réussie !');
+      })
+      .catch(error => {
+        alert(error.message);
+      });
+  };
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        userInfo.textContent = "Connecté en tant que : " + user.email;
-        logoutBtn.style.display = "block";
-        loginBtn.style.display = "none";
-        signupBtn.style.display = "none";
-      } else {
-        userInfo.textContent = "";
-        logoutBtn.style.display = "none";
-        loginBtn.style.display = "block";
-        signupBtn.style.display = "block";
-      }
-    });
-  </script>
+  logoutBtn.onclick = () => {
+    auth.signOut();
+  };
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      userInfo.textContent = 'Connecté en tant que : ' + user.email;
+      
+      // Message de bienvenue stylé
+      const welcomeMsg = document.createElement('p');
+      welcomeMsg.style.color = '#FFD700'; // doré
+      welcomeMsg.style.fontWeight = 'bold';
+      welcomeMsg.textContent = `Bienvenue sur Poésie Amour, ${user.email.split('@')[0]} ! 🌹`;
+      
+      // Enlever ancien message s'il y en a
+      const oldMsg = document.getElementById('welcome-msg');
+      if(oldMsg) oldMsg.remove();
+
+      welcomeMsg.id = 'welcome-msg';
+      userInfo.appendChild(welcomeMsg);
+
+      logoutBtn.style.display = 'block';
+      loginBtn.style.display = 'none';
+      signupBtn.style.display = 'none';
+    } else {
+      userInfo.textContent = '';
+      logoutBtn.style.display = 'none';
+      loginBtn.style.display = 'block';
+      signupBtn.style.display = 'block';
+    }
+  });
+</script>
+
 </body>
 </html>
