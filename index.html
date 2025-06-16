@@ -7,40 +7,88 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      max-width: 400px;
-      margin: 30px auto;
-      padding: 20px;
-      background: #f3f3f3;
-      border-radius: 10px;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ff6ec4, #7873f5);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    input, button {
-      display: block;
-      margin: 10px 0;
-      padding: 8px;
+
+    .container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       width: 100%;
+      max-width: 400px;
+      text-align: center;
     }
+
+    h2 {
+      background: linear-gradient(90deg, #ff6ec4, #7873f5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      color: white;
+      background: linear-gradient(90deg, #ff6ec4, #7873f5);
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
     #user-info {
       margin-top: 20px;
+      color: #444;
     }
   </style>
 </head>
 <body>
 
-  <h2>Poésie Amour - Connexion</h2>
+  <div class="container">
+    <h2>🌸 Poésie Amour</h2>
 
-  <input type="email" id="email" placeholder="Email" />
-  <input type="password" id="password" placeholder="Mot de passe" />
+    <input type="email" id="email" placeholder="Adresse e-mail" />
+    <input type="password" id="password" placeholder="Mot de passe" />
 
-  <button id="signup-btn">S'inscrire</button>
-  <button id="login-btn">Se connecter</button>
-  <button id="logout-btn" style="display:none;">Se déconnecter</button>
+    <button id="signup-btn">S'inscrire</button>
+    <button id="login-btn">Se connecter</button>
+    <button id="logout-btn" style="display:none;">Se déconnecter</button>
 
-  <div id="user-info"></div>
+    <div id="user-info"></div>
+  </div>
 
   <script>
-    // ✅ Ta config Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCtm5hzBBhiYBXJ3FN4tmdkm44LK6tMbXs",
       authDomain: "poesie-amour.firebaseapp.com",
@@ -101,5 +149,6 @@
       }
     });
   </script>
+
 </body>
 </html>
