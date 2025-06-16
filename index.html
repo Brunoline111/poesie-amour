@@ -1,45 +1,105 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Poésie d'Amour</title>
-    <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8" />
+  <title>Poésie Amour - Connexion</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #f3f3f3;
+      border-radius: 10px;
+    }
+    input, button {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      width: 100%;
+    }
+    #user-info {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <div class="toggle-container">
-        <button id="theme-toggle">🌙</button>
-    </div>
-    <header>
-        <h1>Poésie d'Amour</h1>
-        <p>Plonge dans un monde de douceur, de rimes et de passion.</p>
-    </header>
-    <section class="poem">
-        <h2>À toi, mon étoile</h2>
-        <p>
-            Dans le silence de la nuit,<br>
-            Ton amour en moi luit.<br>
-            Chaque battement de mon cœur<br>
-            Résonne comme une douce lueur.
-        </p>
-    </section>
-    <section class="formulaire">
-        <h2>Proposer un poème</h2>
-        <form>
-            <input type="text" placeholder="Ton nom" required /><br>
-            <textarea placeholder="Ton poème ici..." required></textarea><br>
-            <button type="submit">Envoyer</button>
-        </form>
-    </section>
-    <footer>
-        <p>&copy; 2025 Poésie d'Amour. Tous droits réservés.</p>
-    </footer>
-    <script>
-        const toggle = document.getElementById('theme-toggle');
-        toggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark');
-        });
-    </script>
+
+  <h2>Poésie Amour - Connexion</h2>
+
+  <input type="email" id="email" placeholder="Email" />
+  <input type="password" id="password" placeholder="Mot de passe" />
+
+  <button id="signup-btn">S'inscrire</button>
+  <button id="login-btn">Se connecter</button>
+  <button id="logout-btn" style="display:none;">Se déconnecter</button>
+
+  <div id="user-info"></div>
+
+  <script>
+    // ✅ Ta config Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtm5hzBBhiYBXJ3FN4tmdkm44LK6tMbXs",
+      authDomain: "poesie-amour.firebaseapp.com",
+      projectId: "poesie-amour",
+      storageBucket: "poesie-amour.firebasestorage.app",
+      messagingSenderId: "72054264195",
+      appId: "1:72054264195:web:63eae95b68736a77a5e6b6",
+      measurementId: "G-Y7PXEZ6VRW"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const emailInput = document.getElementById('email');
+    const passInput = document.getElementById('password');
+    const signupBtn = document.getElementById('signup-btn');
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userInfo = document.getElementById('user-info');
+
+    signupBtn.onclick = () => {
+      const email = emailInput.value;
+      const password = passInput.value;
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          const user = userCredential.user;
+          db.collection("users").doc(user.uid).set({
+            email: user.email,
+            createdAt: new Date()
+          });
+          alert("Inscription réussie !");
+        })
+        .catch(error => alert(error.message));
+    };
+
+    loginBtn.onclick = () => {
+      const email = emailInput.value;
+      const password = passInput.value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => alert("Connexion réussie !"))
+        .catch(error => alert(error.message));
+    };
+
+    logoutBtn.onclick = () => auth.signOut();
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        userInfo.textContent = "Connecté en tant que : " + user.email;
+        logoutBtn.style.display = "block";
+        loginBtn.style.display = "none";
+        signupBtn.style.display = "none";
+      } else {
+        userInfo.textContent = "";
+        logoutBtn.style.display = "none";
+        loginBtn.style.display = "block";
+        signupBtn.style.display = "block";
+      }
+    });
+  </script>
 </body>
 </html>
