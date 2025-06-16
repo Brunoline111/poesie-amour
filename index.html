@@ -2,33 +2,44 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Poésie d'Amour</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>🌹 Poésie d'Amour 🌹</h1>
-        <p class="intro">Bienvenue dans un monde où chaque mot est un battement de cœur. Explore l'amour à travers des vers doux et des images qui touchent l'âme.</p>
-
-        <div class="poem">
-            <h2>Douce Présence</h2>
-            <p>Ton regard est un feu qui éclaire mes nuits,<br>
-            Ton souffle, une brise qui caresse ma vie.<br>
-            Dans tes silences, j'entends des symphonies,<br>
-            Et dans ton absence, je trouve l'infini.</p>
-        </div>
-
-        <img src="/static/love.jpg" alt="Amour" class="love-img">
-
-        <div class="poem">
-            <h2>À Travers Toi</h2>
-            <p>Chaque mot que tu dis est un vers à écrire,<br>
-            Chaque geste un poème que je veux traduire.<br>
-            Mon cœur est une plume, ton âme le papier,<br>
-            Ensemble, écrivons l’éternité.</p>
-        </div>
+    <div class="toggle-container">
+        <button id="theme-toggle">🌙</button>
     </div>
+    <header>
+        <h1>Poésie d'Amour</h1>
+        <p>Plonge dans un monde de douceur, de rimes et de passion.</p>
+    </header>
+    <section class="poem">
+        <h2>À toi, mon étoile</h2>
+        <p>
+            Dans le silence de la nuit,<br>
+            Ton amour en moi luit.<br>
+            Chaque battement de mon cœur<br>
+            Résonne comme une douce lueur.
+        </p>
+    </section>
+    <section class="formulaire">
+        <h2>Proposer un poème</h2>
+        <form>
+            <input type="text" placeholder="Ton nom" required /><br>
+            <textarea placeholder="Ton poème ici..." required></textarea><br>
+            <button type="submit">Envoyer</button>
+        </form>
+    </section>
+    <footer>
+        <p>&copy; 2025 Poésie d'Amour. Tous droits réservés.</p>
+    </footer>
+    <script>
+        const toggle = document.getElementById('theme-toggle');
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+        });
+    </script>
 </body>
 </html>
