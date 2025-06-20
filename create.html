@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Créer un poème - Poésie Amour</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto&family=Dancing+Script&family=Merriweather&family=Open+Sans&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+    }
+
+    header {
+      background: #b14e76;
+      color: white;
+      padding: 15px 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      position: relative;
+    }
+
+    .header-buttons {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+    }
+
+    .header-buttons button {
+      background: white;
+      color: #b14e76;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 8px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .new-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .new-fields input {
+      padding: 10px;
+      border: 2px solid #b14e76;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .sub-controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .sub-controls label {
+      font-weight: bold;
+    }
+
+    .fond-selection {
+      display: flex;
+      gap: 10px;
+      margin: 15px 0;
+      overflow-x: auto;
+    }
+
+    .fond-selection img {
+      width: 100px;
+      height: 70px;
+      object-fit: cover;
+      border: 3px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .fond-selection img.selected {
+      border-color: #b14e76;
+    }
+
+    .toolbar {
+      margin: 15px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .toolbar button, select, input[type="color"], input[type="number"] {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 2px solid #b14e76;
+      background: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .zone-texte {
+      width: 100%;
+      min-height: 200px;
+      border: 2px solid #b14e76;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 1.2rem;
+      font-family: 'Merriweather', serif;
+      resize: vertical;
+    }
+
+    .cadres {
+      display: flex;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .cadre {
+      width: 60px;
+      height: 60px;
+      border: 3px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .cadre.selected {
+      border-color: #b14e76;
+    }
+
+    .style1 { box-shadow: 0 0 12px #b14e76; }
+    .style2 { border: 5px dashed #b14e76; }
+    .style3 { border: 5px double #b14e76; }
+    .style4 { box-shadow: inset 0 0 15px #b14e76; }
+    .style5 { border: 4px solid #b14e76; border-radius: 30px; }
+
+    .preview-container {
+      text-align: center;
+    }
+
+    .preview {
+      background-size: cover;
+      background-position: center;
+      border-radius: 20px;
+      padding: 30px;
+      color: white;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    #publier {
+      display: block;
+      margin: 25px auto 0;
+      background: #b14e76;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    .config-title, .config-author {
+      margin-top: 10px;
+      background: #fce4ec;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .config-title label,
+    .config-author label {
+      margin-right: 8px;
+      font-weight: bold;
+    }
+
+    .preview-title {
+      max-width: 700px;
+      margin: 20px auto 5px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #b14e76;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<header>
+  Créer un poème
+  <div class="header-buttons">
+    <button onclick="document.getElementById('imageUpload').click()">Importer une image</button>
+    <button onclick="downloadPoem()">Télécharger</button>
+  </div>
+</header>
+
+<main>
+  <div class="new-fields">
+    <input type="text" id="titrePoeme" placeholder="Titre du poème" />
+    <div class="config-title sub-controls">
+      <label for="titreColor">Couleur du titre:</label>
+      <input type="color" id="titreColor" value="#ffffff">
+      <label for="titreSize">Taille:</label>
+      <input type="number" id="titreSize" min="12" max="60" value="28">
+    </div>
+
+    <input type="text" id="auteurPoeme" placeholder="Nom de l'auteur" />
+    <div class="config-author sub-controls">
+      <label for="auteurColor">Couleur auteur:</label>
+      <input type="color" id="auteurColor" value="#ffffff">
+      <label for="positionAuteur">Position:</label>
+      <select id="positionAuteur">
+        <option value="top">En haut</option>
+        <option value="bottom">En bas</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="fond-selection" id="fondSelection">
+    <!-- 2 images d'origine -->
+    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
+         class="selected">
+    <img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Ajout des 14 premières nouvelles images (Phase 1) -->
+    <img src="https://images.unsplash.com/photo-1529088742451-b2e0f4bd9bc0?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1529088742451-b2e0f4bd9bc0?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1481277542470-605612bd2d61?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1481277542470-605612bd2d61?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1506748686215-261a74fbf92f?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1506748686215-261a74fbf92f?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1470770841073-406d8f0d5b34?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1470770841073-406d8f0d5b34?auto=format&fit=crop&w=1200&q=80">
+    <!-- Suite des images (Phase 2) -->
+    <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1534081333815-ae5019106621?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1534081333815-ae5019106621?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1527515637462-d927f70b0553?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1527515637462-d927f70b0553?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1504198458649-3128b932f49b?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1504198458649-3128b932f49b?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1558981033-1a9d36d1b8ab?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1558981033-1a9d36d1b8ab?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1585421703120-a6972d585b82?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1585421703120-a6972d585b82?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1507149833265-60c372daea22?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1501426026826-31c667bdf23d?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1501426026826-31c667bdf23d?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1549887534-c4b7a3e1d32f?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1549887534-c4b7a3e1d32f?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1505842465776-3d90f616310c?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1505842465776-3d90f616310c?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80">
+    <img src="https://images.unsplash.com/photo-1531913892134-4bcbad0c0bb4?auto=format&fit=crop&w=400&q=60"
+         data-url="https://images.unsplash.com/photo-1531913892134-4bcbad0c0bb4?auto=format&fit=crop&w=1200&q=80">
+  </div>
+
+  <input type="range" id="contraste" min="0" max="100" value="30" />
+
+  <div class="toolbar">
+    <button type="button" data-command="bold">B</button>
+    <button type="button" data-command="italic">I</button>
+    <button type="button" data-command="underline">U</button>
+    <input type="color" id="colorPicker" value="#ffffff">
+    <select id="fontSelect">
+      <option value="'Merriweather', serif" selected>Merriweather</option>
+      <option value="'Dancing Script', cursive">Dancing Script</option>
+      <option value="'Roboto', sans-serif">Roboto</option>
+      <option value="'Open Sans', sans-serif">Open Sans</option>
+    </select>
+    <input type="number" id="fontSize" min="10" max="48" value="24">
+    <button type="button" class="align-btn" data-align="left">⬅️</button>
+    <button type="button" class="align-btn" data-align="center">↔️</button>
+    <button type="button" class="align-btn" data-align="right">➡️</button>
+  </div>
+
+  <div contenteditable="true" id="poemeTexte" class="zone-texte"></div>
+
+  <div class="cadres" id="cadres">
+    <div class="cadre style1 selected" data-style="style1"></div>
+    <div class="cadre style2" data-style="style2"></div>
+    <div class="cadre style3" data-style="style3"></div>
+    <div class="cadre style4" data-style="style4"></div>
+    <div class="cadre style5" data-style="style5"></div>
+  </div>
+
+  <div class="preview-title">Aperçu du poème</div>
+
+  <div class="preview-container">
+    <div id="preview" class="preview style1" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80');"></div>
+  </div>
+
+  <button id="publier">Publier le poème</button>
+</main>
+
+<input type="file" id="imageUpload" accept="image/*" style="display: none">
+
+<script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyCtm5hzBBhiYBXJ3FN4tmdkm44LK6tMbXs",
+  authDomain: "poesie-amour.firebaseapp.com",
+  projectId: "poesie-amour",
+  storageBucket: "poesie-amour.appspot.com",
+  messagingSenderId: "72054264195",
+  appId: "1:72054264195:web:63eae95b68736a77a5e6b6",
+  measurementId: "G-Y7PXEZ6VRW"
+};
+
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const fondSelection = document.getElementById('fondSelection');
+  const contrasteSlider = document.getElementById('contraste');
+  const poemeTexte = document.getElementById('poemeTexte');
+  const preview = document.getElementById('preview');
+  const cadres = document.getElementById('cadres');
+  const colorPicker = document.getElementById('colorPicker');
+  const fontSelect = document.getElementById('fontSelect');
+  const fontSize = document.getElementById('fontSize');
+  const imageUpload = document.getElementById('imageUpload');
+  const publierBtn = document.getElementById('publier');
+  const titrePoemeInput = document.getElementById('titrePoeme');
+  const auteurPoemeInput = document.getElementById('auteurPoeme');
+  const alignButtons = document.querySelectorAll('.align-btn');
+  const titreColor = document.getElementById('titreColor');
+  const titreSize = document.getElementById('titreSize');
+  const auteurColor = document.getElementById('auteurColor');
+  const positionAuteur = document.getElementById('positionAuteur');
+
+  let selectedFondUrl = fondSelection.querySelector('img.selected').dataset.url;
+  let selectedCadre = cadres.querySelector('.cadre.selected').dataset.style;
+  let currentAlign = 'left';
+
+  function getBrightnessValue() {
+    return Math.max(0.3, 1 - (contrasteSlider.value / 100));
+  }
+
+  function updatePreview() {
+    const brightness = getBrightnessValue();
+    preview.style.backgroundImage = `url('${selectedFondUrl}')`;
+    preview.style.filter = `brightness(${brightness})`;
+    preview.style.color = colorPicker.value;
+    preview.style.fontFamily = fontSelect.value;
+    preview.style.fontSize = fontSize.value + 'px';
+    preview.style.textAlign = currentAlign;
+    poemeTexte.style.textAlign = currentAlign;
+
+    const titre = titrePoemeInput.value.trim();
+    const auteur = auteurPoemeInput.value.trim();
+    const texte = poemeTexte.innerHTML;
+
+    let contenu = '';
+
+    if (titre) {
+      contenu += `<h2 style="margin-bottom: 15px; color:${titreColor.value}; font-size:${titreSize.value}px;">${titre}</h2>`;
+    }
+
+    if (positionAuteur.value === 'top' && auteur) {
+      contenu += `<p style="margin-top: 5px; margin-bottom: 15px; font-style: italic; color: ${auteurColor.value};">Par ${auteur}</p>`;
+    }
+
+    contenu += texte;
+
+    if (positionAuteur.value === 'bottom' && auteur) {
+      contenu += `<p style="margin-top: 20px; font-style: italic; color: ${auteurColor.value};">Par ${auteur}</p>`;
+    }
+
+    preview.innerHTML = contenu;
+    preview.className = `preview ${selectedCadre}`;
+  }
+
+  fondSelection.addEventListener('click', e => {
+    if (e.target.tagName === 'IMG') {
+      fondSelection.querySelectorAll('img').forEach(img => img.classList.remove('selected'));
+      e.target.classList.add('selected');
+      selectedFondUrl = e.target.dataset.url;
+      updatePreview();
+    }
+  });
+
+  cadres.addEventListener('click', e => {
+    if (e.target.classList.contains('cadre')) {
+      cadres.querySelectorAll('.cadre').forEach(c => c.classList.remove('selected'));
+      e.target.classList.add('selected');
+      selectedCadre = e.target.dataset.style;
+      updatePreview();
+    }
+  });
+
+  document.querySelectorAll('.toolbar button[data-command]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      poemeTexte.focus();
+      const command = btn.dataset.command;
+      document.execCommand(command, false, null);
+      updatePreview();
+    });
+  });
+
+  alignButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentAlign = btn.dataset.align;
+      updatePreview();
+    });
+  });
+
+  [
+    contrasteSlider, colorPicker, fontSelect, fontSize,
+    titrePoemeInput, auteurPoemeInput,
+    titreColor, titreSize, auteurColor, positionAuteur
+  ].forEach(input => {
+    input.addEventListener('input', updatePreview);
+  });
+
+  poemeTexte.addEventListener('input', updatePreview);
+
+  imageUpload.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file && file.size <= 10 * 1024 * 1024) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        selectedFondUrl = e.target.result;
+        updatePreview();
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert("Image trop lourde (max 10Mo)");
+    }
+  });
+
+  function downloadPoem() {
+    const brightness = getBrightnessValue();
+
+    const clone = preview.cloneNode(true);
+    clone.style.backgroundImage = `url('${selectedFondUrl}')`;
+    clone.style.backgroundSize = 'cover';
+    clone.style.filter = `brightness(${brightness})`;
+    clone.style.color = preview.style.color;
+    clone.style.fontFamily = preview.style.fontFamily;
+    clone.style.fontSize = preview.style.fontSize;
+    clone.style.padding = preview.style.padding;
+    clone.style.width = preview.offsetWidth + 'px';
+    clone.style.height = preview.offsetHeight + 'px';
+    clone.style.borderRadius = preview.style.borderRadius;
+    clone.style.textAlign = currentAlign;
+    clone.className = preview.className;
+
+    document.body.appendChild(clone);
+    html2canvas(clone, { useCORS: true, allowTaint: false }).then(canvas => {
+      document.body.removeChild(clone);
+      const link = document.createElement('a');
+      link.download = 'poeme.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }).catch(err => {
+      alert("Erreur lors du téléchargement : " + err.message);
+      document.body.removeChild(clone);
+    });
+  }
+
+  publierBtn.addEventListener('click', async () => {
+    const titre = titrePoemeInput.value.trim();
+    const auteur = auteurPoemeInput.value.trim();
+    const texte = poemeTexte.innerHTML.trim();
+    if (!titre || !auteur || !texte) return alert("Tous les champs sont obligatoires");
+
+    const poemData = {
+      titre,
+      auteur,
+      texte,
+      fondUrl: selectedFondUrl,
+      cadreStyle: selectedCadre,
+      couleurTexte: colorPicker.value,
+      police: fontSelect.value,
+      taillePolice: fontSize.value,
+      contraste: contrasteSlider.value,
+      alignement: currentAlign,
+      titreColor: titreColor.value,
+      titreSize: titreSize.value,
+      auteurColor: auteurColor.value,
+      auteurPosition: positionAuteur.value,
+      datePublication: firebase.firestore.FieldValue.serverTimestamp(),
+      likes: 0,
+      commentaires: [],
+      auteurUid: auth.currentUser ? auth.currentUser.uid : null
+    };
+
+    try {
+      await db.collection('poems').add(poemData);
+      alert('Poème publié avec succès !');
+      titrePoemeInput.value = '';
+      auteurPoemeInput.value = '';
+      poemeTexte.innerHTML = '';
+      currentAlign = 'left';
+      updatePreview();
+    } catch (e) {
+      alert("Erreur lors de la publication : " + e.message);
+    }
+  });
+
+  updatePreview();
+</script>
+</body>
+</html>

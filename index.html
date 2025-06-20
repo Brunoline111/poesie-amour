@@ -5,268 +5,224 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Poésie Amour - Accueil</title>
   <style>
-    /* Reset basique */
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
     body {
-      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-      min-height: 100vh;
-      display: flex; flex-direction: column;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff0f6;
+      margin: 0;
+      padding: 0;
+      color: #333;
     }
-    header {
-      background: rgba(255, 255, 255, 0.8);
-      padding: 15px 30px;
+
+    nav {
+      background: #d63384;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    nav h1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    nav a.create-poem-btn {
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      margin-right: 20px;
+      padding: 8px 12px;
+      border: 2px solid white;
+      border-radius: 8px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    nav a.create-poem-btn:hover {
+      background: white;
+      color: #d63384;
+    }
+
+    #profileBtn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    header h1 {
-      font-weight: 900;
-      font-size: 1.8rem;
-      color: #d64a4a;
-      user-select: none;
-    }
-    nav a {
-      margin-left: 25px;
-      text-decoration: none;
-      color: #d64a4a;
-      font-weight: 600;
-      transition: color 0.3s ease;
-    }
-    nav a:hover {
-      color: #822222;
+      gap: 8px;
+      position: relative;
     }
 
-    main {
-      flex: 1;
-      display: flex;
-      padding: 30px;
-      gap: 30px;
-      max-width: 1200px;
-      margin: 0 auto;
-      color: #5a1a1a;
-    }
-
-    /* Colonne de gauche: profil + membres */
-    .sidebar {
-      flex: 0 0 280px;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-    }
-    .profile {
-      text-align: center;
-    }
-    .profile img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
+    #profileBtn img {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      border: 3px solid #d64a4a;
-      margin-bottom: 15px;
-      box-shadow: 0 0 8px rgba(214, 74, 74, 0.7);
-    }
-    .profile h2 {
-      font-size: 1.4rem;
-      margin-bottom: 5px;
-    }
-    .profile p {
-      font-style: italic;
-      color: #822222;
-    }
-    .members-list {
-      flex: 1;
-      overflow-y: auto;
-    }
-    .members-list h3 {
-      margin-bottom: 12px;
-      font-weight: 700;
-      border-bottom: 2px solid #d64a4a;
-      padding-bottom: 5px;
-    }
-    .members-list ul {
-      list-style: none;
-      max-height: 250px;
-      overflow-y: auto;
-    }
-    .members-list li {
-      margin-bottom: 8px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      background: #f9b3b3;
-      color: #581111;
-      font-weight: 600;
-      box-shadow: inset 0 0 4px rgba(255,255,255,0.7);
-      cursor: default;
-      user-select: none;
+      object-fit: cover;
+      border: 2px solid white;
     }
 
-    /* Colonne principale: poèmes */
-    .poems-section {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      padding: 25px 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-      overflow-y: auto;
-      max-height: 80vh;
-    }
-    .poems-section h2 {
-      font-weight: 900;
-      color: #d64a4a;
-      margin-bottom: 10px;
-      user-select: none;
-    }
-    .poem {
-      background: #ffdede;
-      padding: 20px 25px;
-      border-radius: 15px;
-      box-shadow: inset 0 0 15px rgba(214, 74, 74, 0.2);
-      transition: background 0.3s ease;
-      cursor: default;
-      user-select: text;
-    }
-    .poem:hover {
-      background: #ffc3c3;
-    }
-    .poem p {
-      font-size: 1.1rem;
-      line-height: 1.5;
-      color: #581111;
-      margin-bottom: 12px;
-    }
-    .poem .author {
-      font-weight: 700;
-      font-style: italic;
-      text-align: right;
-      color: #822222;
-      user-select: none;
-    }
-
-    /* Déconnexion */
-    #logout-btn {
-      margin-top: 20px;
-      background: #d64a4a;
-      border: none;
-      padding: 12px 20px;
-      color: white;
-      font-weight: 700;
-      font-size: 1rem;
+    #profileMenu {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: white;
+      color: #333;
       border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(214, 51, 132, 0.4);
+      width: 260px;
+      display: none;
+      flex-direction: column;
+      padding: 10px 0;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    #profileMenu.active {
+      display: flex;
+    }
+
+    #profileMenu button,
+    #profileMenu .menu-item {
+      padding: 12px 20px;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
       cursor: pointer;
-      align-self: center;
-      box-shadow: 0 4px 8px rgba(214, 74, 74, 0.7);
-      transition: background 0.3s ease;
-    }
-    #logout-btn:hover {
-      background: #822222;
+      font-size: 1rem;
+      transition: background 0.2s ease;
+      box-sizing: border-box;
     }
 
-    /* Scrollbar jolie */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #ffdede;
-      border-radius: 10px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #d64a4a;
-      border-radius: 10px;
+    #profileMenu .menu-item {
+      text-decoration: none;
+      color: inherit;
+      display: block;
     }
 
-    @media (max-width: 900px) {
-      main {
-        flex-direction: column;
-        padding: 20px 15px;
-      }
-      .sidebar {
-        flex: none;
-        width: 100%;
-        order: 2;
-        margin-top: 30px;
-        max-height: 300px;
-      }
-      .poems-section {
-        max-height: none;
-        order: 1;
-      }
+    #profileMenu button:hover,
+    #profileMenu .menu-item:hover {
+      background: #f8bbd0;
     }
+
+    #poemsSection {
+      max-width: 900px;
+      margin: 30px auto 60px;
+      padding: 0 20px;
+    }
+
+    #poemsSection h2 {
+      color: #d63384;
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+
+    /* Ajoutez ici les styles des poèmes */
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Poésie Amour</h1>
   <nav>
-    <a href="#">Accueil</a>
-    <a href="#">Poèmes</a>
-    <a href="#">Communauté</a>
-    <a href="#">Profil</a>
+    <h1>Poésie Amour</h1>
+    <a href="create.html" class="create-poem-btn">Créer un poème</a>
+
+    <button id="profileBtn" aria-haspopup="true" aria-expanded="false" title="Profil utilisateur">
+      <img src="https://via.placeholder.com/32" alt="Avatar utilisateur" id="profileAvatar" />
+      <span id="profileName">Utilisateur</span>
+    </button>
+
+    <div id="profileMenu" role="menu" aria-label="Menu profil utilisateur">
+      <a href="profile.html" class="menu-item">Mon profil</a>
+      <button id="logoutBtn">Se déconnecter</button>
+    </div>
   </nav>
-</header>
 
-<main>
-  <aside class="sidebar">
-    <section class="profile">
-      <img src="https://i.pravatar.cc/120" alt="Photo de profil" />
-      <h2>Emmanuel</h2>
-      <p>Poète passionné ❤️</p>
+  <main>
+    <section id="poemsSection" aria-live="polite" aria-atomic="true">
+      <h2>Poèmes récents</h2>
+      <div id="poemsContainer">
+        <!-- Poèmes générés via JS ici -->
+      </div>
     </section>
+  </main>
 
-    <section class="members-list">
-      <h3>Membres en ligne</h3>
-      <ul>
-        <li>Bruno</li>
-        <li>Fatima</li>
-        <li>Jean</li>
-        <li>Anna</li>
-        <li>Paul</li>
-      </ul>
-    </section>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-    <button id="logout-btn">Se déconnecter</button>
-  </aside>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtm5hzBBhiYBXJ3FN4tmdkm44LK6tMbXs",
+      authDomain: "poesie-amour.firebaseapp.com",
+      projectId: "poesie-amour",
+      storageBucket: "poesie-amour.appspot.com",
+      messagingSenderId: "72054264195",
+      appId: "1:72054264195:web:63eae95b68736a77a5e6b6",
+      measurementId: "G-Y7PXEZ6VRW"
+    };
 
-  <section class="poems-section">
-    <h2>Poèmes récents</h2>
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    <article class="poem">
-      <p>Dans le silence des nuits étoilées,<br />
-      Les mots dansent en douce symphonie,<br />
-      Échos d’un cœur rempli de vérité,<br />
-      La poésie, notre plus belle magie.</p>
-      <div class="author">— Emmanuel Bruno</div>
-    </article>
+    const profileBtn = document.getElementById('profileBtn');
+    const profileMenu = document.getElementById('profileMenu');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const profileAvatar = document.getElementById('profileAvatar');
+    const profileNameSpan = document.getElementById('profileName');
 
-    <article class="poem">
-      <p>Sur la toile blanche, mes rêves s’écrivent,<br />
-      Chaque vers, une histoire à découvrir,<br />
-      Sous le souffle chaud de l’amour qui vibre,<br />
-      Mon âme libre ne cesse de s’ouvrir.</p>
-      <div class="author">— Fatima</div>
-    </article>
+    const defaultPhotos = [
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=200&q=80",
+      "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=200&q=80",
+      "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=200&q=80",
+      "https://images.unsplash.com/photo-1445820131753-5a1ecdb8e3ee?auto=format&fit=crop&w=200&q=80",
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=200&q=80"
+    ];
 
-  </section>
-</main>
+    profileBtn.addEventListener('click', () => {
+      const isActive = profileMenu.classList.contains('active');
+      profileMenu.classList.toggle('active', !isActive);
+      profileBtn.setAttribute('aria-expanded', !isActive);
+    });
 
-<script>
-  // Pour le bouton logout, on affiche juste un alert pour l’instant
-  document.getElementById('logout-btn').addEventListener('click', () => {
-    alert('Déconnexion à implémenter avec Firebase demain !');
-    // Plus tard, ici : firebase.auth().signOut()
-  });
-</script>
+    document.addEventListener('click', e => {
+      if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+        profileMenu.classList.remove('active');
+        profileBtn.setAttribute('aria-expanded', false);
+      }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await auth.signOut();
+        window.location.href = 'login.html';
+      } catch (error) {
+        alert('Erreur lors de la déconnexion : ' + error.message);
+      }
+    });
+
+    auth.onAuthStateChanged(async user => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const doc = await db.collection('users').doc(user.uid).get();
+      const data = doc.exists ? doc.data() : {};
+      const name = data.name || user.displayName || user.email || "Utilisateur";
+      const photo = user.photoURL || data.photoURL || defaultPhotos[Math.floor(Math.random() * defaultPhotos.length)];
+
+      profileNameSpan.textContent = name;
+      profileAvatar.src = photo;
+    });
+  </script>
 
 </body>
 </html>
