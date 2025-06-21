@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+
   <title>Créer un poème - Poésie Amour</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
@@ -290,6 +292,50 @@
   input[type="color"],
   input[type="number"] {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  .header-buttons {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .toolbar {
+    gap: 6px;
+  }
+
+  .toolbar button,
+  .toolbar select,
+  .toolbar input {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .new-fields input {
+    font-size: 0.95rem;
+  }
+
+  .preview {
+    padding: 15px;
+  }
+
+  .preview-title {
+    font-size: 1rem;
+  }
+
+  .cadres {
+    gap: 10px;
+  }
+
+  .cadre {
+    width: 45px;
+    height: 45px;
   }
 }
 
